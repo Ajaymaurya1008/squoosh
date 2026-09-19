@@ -29,7 +29,8 @@ Like the rest of Squoosh, all of this runs locally — no image is uploaded.
 The same batch compression is available without a browser:
 
 ```sh
-node cli/index.js -f webP -q 60 -o out photos/
+npm install -g squoosh-batch
+squoosh-batch -f webP -q 60 -o out photos/
 ```
 
 It runs the same WebAssembly codecs with the same defaults, so most formats

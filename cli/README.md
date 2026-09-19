@@ -5,11 +5,18 @@ WebAssembly codecs as batch mode, with the same default settings, so the same
 image and options give you the same file.
 
 ```sh
-node cli/index.js photos/
+npm install -g squoosh-batch
+squoosh-batch photos/
 ```
 
-No install and no dependencies — it uses the codecs already in this repo and
-nothing from npm. Node 18.3 or newer.
+No dependencies — the codecs are WebAssembly and ship inside the package.
+Node 18.3 or newer.
+
+From a checkout of this repo you can also run it without installing:
+
+```sh
+node cli/index.js photos/
+```
 
 ## Usage
 
@@ -86,6 +93,31 @@ converting back, so a pixel the wasm decoder reads as `[136,128,119]` comes back
 from a canvas as `[136,127,119]`. That difference is invisible, but it's enough
 to change the compressed bytes. The CLI's reading is the more accurate of the
 two.
+
+## Publishing a release
+
+The package is `cli/`, and it carries its own copy of the codecs so an
+installed copy doesn't need the rest of the repo. `prepack` copies them in, so
+`npm pack` and `npm publish` both pick them up — there's no separate build step
+to remember.
+
+```sh
+cd cli
+npm version patch      # or minor / major
+npm publish
+```
+
+The first publish needs `npm login` and, since the name is unscoped, an account
+that can claim `squoosh-batch`. Check what you're about to ship first:
+
+```sh
+npm pack --dry-run
+```
+
+That should list `index.js`, `lib/`, `README.md` and about 30 files under
+`vendor/codecs` — roughly 3 MB compressed.
+
+`cli/vendor` is generated and git-ignored; don't commit it.
 
 ## Keeping the defaults in step
 
