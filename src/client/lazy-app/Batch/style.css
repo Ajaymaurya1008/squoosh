@@ -125,33 +125,46 @@
 }
 
 .format-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 2px 12px;
   margin: 0 0 16px;
   padding: 0;
   list-style: none;
 }
 
-.format-chip {
-  padding: 7px 14px;
-  border: 1px solid #3a3a3a;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--light-gray);
-  font-size: 0.85rem;
+.format-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+  border-radius: 4px;
   cursor: pointer;
 
   &:hover {
-    border-color: var(--pink);
+    background: #1d1d1d;
+  }
+
+  /* The only remaining format can't be turned off. */
+  &:has(input:disabled) {
+    cursor: default;
+
+    &:hover {
+      background: none;
+    }
+
+    /* Still show it as ticked - the shared checkbox greys a disabled tick
+       out so far that the one selected format looks unselected. */
+    & svg {
+      fill: var(--main-theme-color);
+      opacity: 0.6;
+    }
   }
 }
 
-.format-chip-on {
-  composes: format-chip;
-  border-color: var(--pink);
-  background: var(--pink);
-  color: var(--white);
+.format-name {
+  font-size: 0.85rem;
+  color: var(--light-gray);
 }
 
 .format-options {

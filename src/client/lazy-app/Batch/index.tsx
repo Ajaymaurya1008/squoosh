@@ -26,6 +26,7 @@ import {
 import { createZip, dedupeNames } from '../util/zip';
 import prettyBytes from '../Compress/Results/pretty-bytes';
 import { DownloadIcon } from '../icons';
+import Checkbox from '../Compress/Options/Checkbox';
 import type SnackBarElement from 'shared/custom-els/snack-bar';
 import { linkRef } from 'shared/prerendered-app/util';
 
@@ -476,16 +477,28 @@ export default class Batch extends Component<Props, State> {
               (format) => format.type === type,
             );
 
+            // Something has to be encoded, so the last one standing can't be
+            // unticked. Disabling it shows why, rather than ignoring a click.
+            const isLastSelected = selected && settings.formats.length === 1;
+
             return (
               <li key={type}>
-                <button
-                  type="button"
-                  class={selected ? style.formatChipOn : style.formatChip}
-                  aria-pressed={selected ? 'true' : 'false'}
-                  onClick={() => this.onFormatToggle(type)}
+                <label
+                  class={style.formatOption}
+                  title={
+                    isLastSelected
+                      ? 'Pick another format before turning this one off'
+                      : undefined
+                  }
                 >
-                  {encoder!.meta.label}
-                </button>
+                  <Checkbox
+                    name={type}
+                    checked={selected}
+                    disabled={isLastSelected}
+                    onChange={() => this.onFormatToggle(type)}
+                  />
+                  <span class={style.formatName}>{encoder!.meta.label}</span>
+                </label>
               </li>
             );
           })}
