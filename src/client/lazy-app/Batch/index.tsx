@@ -147,7 +147,22 @@ export default class Batch extends Component<Props, State> {
     supportedEncoderMapP.then((supportedEncoderMap) => {
       this.setState({ supportedEncoderMap });
     });
-    this.addFiles(props.files);
+
+    // Seed the initial files directly rather than through addFiles. A setState
+    // callback doesn't fire from a constructor, so scheduling the run from
+    // here would silently never happen, leaving every image stuck as queued.
+    this.state.items = this.itemsFor(props.files);
+
+    // Tell the service worker to cache the codecs, the same way the editor
+    // does. Without this, a user who only ever uses batch mode has nothing to
+    // encode with when they go offline.
+    import('../sw-bridge').then(({ mainAppLoaded }) => mainAppLoaded());
+  }
+
+  componentDidMount(): void {
+    if (this.state.items.length === 0) return;
+    this.notifyFilesChange();
+    this.scheduleRun(0);
   }
 
   componentWillReceiveProps(nextProps: Props): void {
@@ -167,19 +182,23 @@ export default class Batch extends Component<Props, State> {
     }
   }
 
-  private addFiles(files: File[]): void {
+  /** Turn files into items, skipping any already in the batch. */
+  private itemsFor(files: File[]): Item[] {
     const newFiles = files.filter((file) => file && !this.seenFiles.has(file));
-    if (newFiles.length === 0) return;
-
     for (const file of newFiles) this.seenFiles.add(file);
 
-    const items: Item[] = newFiles.map((file) => ({
+    return newFiles.map((file) => ({
       id: nextItemId++,
       file,
       sourceUrl: URL.createObjectURL(file),
       status: 'queued',
       outputs: {},
     }));
+  }
+
+  private addFiles(files: File[]): void {
+    const items = this.itemsFor(files);
+    if (items.length === 0) return;
 
     this.setState(
       (state) => ({ items: [...state.items, ...items] }),

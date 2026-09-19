@@ -74,8 +74,6 @@ interface Props {
   onFile?: (file: File) => void;
   /** Called when several files are picked at once. */
   onFiles?: (files: File[]) => void;
-  /** Open batch mode with no files. */
-  onBatch?: () => void;
   showSnack?: SnackBarElement['showSnackbar'];
 }
 interface State {
@@ -132,10 +130,6 @@ export default class Intro extends Component<Props, State> {
       return;
     }
     this.props.onFile!(files[0]);
-  };
-
-  private onBatchClick = () => {
-    this.props.onBatch!();
   };
 
   private onOpenClick = () => {
@@ -272,9 +266,9 @@ export default class Intro extends Component<Props, State> {
                   'Paste'
                 )}
               </div>
-              <button class={style.batchBtn} onClick={this.onBatchClick}>
-                Compress many at once
-              </button>
+              <p class={style.batchNote}>
+                You can compress multiple images at once now.
+              </p>
             </div>
           </div>
         </div>
