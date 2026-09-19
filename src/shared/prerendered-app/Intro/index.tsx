@@ -56,6 +56,8 @@ const blobAnimImport =
   !__PRERENDER__ && matchMedia('(prefers-reduced-motion: reduce)').matches
     ? undefined
     : import('./blob-anim');
+/** This fork's repository. Both footer links point here. */
+const repoUrl = 'https://github.com/Ajaymaurya1008/squoosh';
 const supportsClipboardAPI =
   !__PRERENDER__ && navigator.clipboard && navigator.clipboard.read;
 
@@ -417,14 +419,11 @@ export default class Intro extends Component<Props, State> {
               <footer class={style.footerItems}>
                 <a
                   class={style.footerLink}
-                  href="https://github.com/GoogleChromeLabs/squoosh/blob/dev/README.md#privacy"
+                  href={`${repoUrl}/blob/dev/README.md#privacy`}
                 >
                   Privacy
                 </a>
-                <a
-                  class={style.footerLinkWithLogo}
-                  href="https://github.com/GoogleChromeLabs/squoosh"
-                >
+                <a class={style.footerLinkWithLogo} href={repoUrl}>
                   <img src={githubLogo} alt="" width="10" height="10" />
                   Source on Github
                 </a>
