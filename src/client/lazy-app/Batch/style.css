@@ -74,6 +74,31 @@
   }
 }
 
+/* Shown inside the download button while work is in progress. */
+.button-spinner {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-right: 0.5em;
+  vertical-align: -0.1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: button-spin 700ms linear infinite;
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button-spinner {
+    animation-duration: 2.4s;
+  }
+}
+
 .secondary-button {
   composes: primary-button;
   background: #2a2a2a;
