@@ -27,6 +27,9 @@ interface Props {}
 const Index: FunctionalComponent<Props> = () => (
   <html lang="en">
     <head>
+      {/* The UI uses non-ASCII characters, and scripts inherit the document's
+          encoding, so don't depend on the host sending a charset. */}
+      <meta charSet="utf-8" />
       <title>Squoosh</title>
       <meta
         name="description"

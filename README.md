@@ -53,6 +53,23 @@ To develop for Squoosh:
    npm run dev
    ```
 
+# Deploying
+
+The build is a static site in `build/`, but it needs two response headers
+(`Cross-Origin-Embedder-Policy: require-corp` and
+`Cross-Origin-Opener-Policy: same-origin`) for the multi-threaded WebAssembly
+codecs to run, plus redirects for the `/editor` and `/batch` routes.
+
+- **Netlify** and similar hosts read the generated `_headers` and `_redirects`
+  files in `build/`.
+- **Vercel** ignores those files, so `vercel.json` in the repo root declares the
+  same headers and redirects. Import the repo and the defaults apply — build
+  command `npm run build`, output directory `build`.
+
+If the deployed app logs `crossOriginIsolated === false` in the console, the
+headers aren't reaching the browser and the threaded codecs will fall back or
+fail.
+
 # Contributing
 
 Squoosh is an open-source project that appreciates all community involvement. To contribute to the project, follow the [contribute guide](/CONTRIBUTING.md).
