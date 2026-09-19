@@ -56,7 +56,6 @@ const blobAnimImport =
   !__PRERENDER__ && matchMedia('(prefers-reduced-motion: reduce)').matches
     ? undefined
     : import('./blob-anim');
-const installButtonSource = 'introInstallButton-Purple';
 const supportsClipboardAPI =
   !__PRERENDER__ && navigator.clipboard && navigator.clipboard.read;
 
@@ -71,6 +70,10 @@ async function getImageClipboardItem(
 
 interface Props {
   onFile?: (file: File) => void;
+  /** Called when several files are picked at once. */
+  onFiles?: (files: File[]) => void;
+  /** Open batch mode with no files. */
+  onBatch?: () => void;
   showSnack?: SnackBarElement['showSnackbar'];
 }
 interface State {
@@ -85,7 +88,6 @@ export default class Intro extends Component<Props, State> {
   };
   private fileInput?: HTMLInputElement;
   private blobCanvas?: HTMLCanvasElement;
-  private installingViaButton = false;
 
   componentDidMount() {
     // Listen for beforeinstallprompt events, indicating Squoosh is installable.
@@ -119,10 +121,19 @@ export default class Intro extends Component<Props, State> {
 
   private onFileChange = (event: Event): void => {
     const fileInput = event.target as HTMLInputElement;
-    const file = fileInput.files && fileInput.files[0];
-    if (!file) return;
+    const files = Array.from(fileInput.files || []);
+    if (files.length === 0) return;
     this.fileInput!.value = '';
-    this.props.onFile!(file);
+
+    if (files.length > 1 && this.props.onFiles) {
+      this.props.onFiles(files);
+      return;
+    }
+    this.props.onFile!(files[0]);
+  };
+
+  private onBatchClick = () => {
+    this.props.onBatch!();
   };
 
   private onOpenClick = () => {
@@ -148,57 +159,21 @@ export default class Intro extends Component<Props, State> {
 
     // Save the beforeinstallprompt event so it can be called later.
     this.setState({ beforeInstallEvent: event });
-
-    // Log the event.
-    const gaEventInfo = {
-      eventCategory: 'pwa-install',
-      eventAction: 'promo-shown',
-      nonInteraction: true,
-    };
-    ga('send', 'event', gaEventInfo);
   };
 
-  private onInstallClick = async (event: Event) => {
+  private onInstallClick = () => {
     // Get the deferred beforeinstallprompt event
     const beforeInstallEvent = this.state.beforeInstallEvent;
     // If there's no deferred prompt, bail.
     if (!beforeInstallEvent) return;
 
-    this.installingViaButton = true;
-
     // Show the browser install prompt
     beforeInstallEvent.prompt();
-
-    // Wait for the user to accept or dismiss the install prompt
-    const { outcome } = await beforeInstallEvent.userChoice;
-    // Send the analytics data
-    const gaEventInfo = {
-      eventCategory: 'pwa-install',
-      eventAction: 'promo-clicked',
-      eventLabel: installButtonSource,
-      eventValue: outcome === 'accepted' ? 1 : 0,
-    };
-    ga('send', 'event', gaEventInfo);
-
-    // If the prompt was dismissed, we aren't going to install via the button.
-    if (outcome === 'dismissed') {
-      this.installingViaButton = false;
-    }
   };
 
   private onAppInstalled = () => {
     // We don't need the install button, if it's shown
     this.setState({ beforeInstallEvent: undefined });
-
-    // Don't log analytics if page is not visible
-    if (document.hidden) return;
-
-    // Try to get the install, if it's not set, use 'browser'
-    const source = this.installingViaButton ? installButtonSource : 'browser';
-    ga('send', 'event', 'pwa-install', 'installed', source);
-
-    // Clear the install method property
-    this.installingViaButton = false;
   };
 
   private onPasteClick = async () => {
@@ -231,6 +206,7 @@ export default class Intro extends Component<Props, State> {
           class={style.hide}
           ref={linkRef(this, 'fileInput')}
           type="file"
+          multiple
           onChange={this.onFileChange}
         />
         <div class={style.main}>
@@ -294,6 +270,9 @@ export default class Intro extends Component<Props, State> {
                   'Paste'
                 )}
               </div>
+              <button class={style.batchBtn} onClick={this.onBatchClick}>
+                Compress many at once
+              </button>
             </div>
           </div>
         </div>

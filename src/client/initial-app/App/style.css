@@ -66,3 +66,13 @@
   --size: 225px;
   --stroke-width: 26px;
 }
+
+/* A view that's currently on screen. */
+.view {
+  display: contents;
+}
+
+/* Keeps a view mounted (and working) while another view is on screen. */
+.offscreen {
+  display: none !important;
+}
