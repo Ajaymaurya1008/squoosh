@@ -714,6 +714,19 @@ export default class Batch extends Component<Props, State> {
       ),
     );
 
+    // While images are still encoding, say so on the download button rather
+    // than leaving it disabled with no explanation.
+    const finished = items.filter(
+      (item) => item.status === 'done' || item.status === 'error',
+    ).length;
+    const compressing = items.length > 0 && finished < items.length;
+
+    let downloadLabel = 'Download all';
+    if (zipping) downloadLabel = 'Zipping…';
+    else if (compressing) {
+      downloadLabel = `Compressing ${finished}/${items.length}…`;
+    }
+
     return (
       <div class={style.batch}>
         <input
@@ -747,9 +760,13 @@ export default class Batch extends Component<Props, State> {
               type="button"
               class={style.primaryButton}
               onClick={this.onDownloadAllClick}
-              disabled={!anyDone || zipping}
+              disabled={!anyDone || zipping || compressing}
+              aria-busy={zipping || compressing ? 'true' : 'false'}
             >
-              {zipping ? 'Zipping…' : 'Download all'}
+              {(zipping || compressing) && (
+                <span class={style.buttonSpinner} aria-hidden="true" />
+              )}
+              {downloadLabel}
             </button>
           </div>
         </header>
