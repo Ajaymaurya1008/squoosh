@@ -2,6 +2,28 @@
 
 [Squoosh] is an image compression web app that reduces image sizes through numerous formats.
 
+# Batch compression
+
+As well as the single-image editor, Squoosh has a batch mode at `/batch` for
+compressing many images at once:
+
+- **Many images at a time.** Drop several images anywhere in the app, pick
+  several from the file picker, or use **Compress many at once** on the home
+  page. Images are decoded and encoded in parallel across a pool of workers.
+- **Several formats at a time.** Select any number of output formats and every
+  image is encoded to each one, with per-image and per-format size savings shown
+  as they finish. Each format keeps its own quality settings.
+- **Remembered settings.** The formats you pick, their options, and the resize
+  settings are stored in `localStorage`, so they're selected by default the next
+  time you visit. The last format you picked also becomes the default in the
+  single-image editor.
+- **Optional downscaling.** Shrink every image to fit inside a maximum width and
+  height, preserving aspect ratio.
+- **Download everything.** Grab a single result, or download the whole batch as
+  a zip (one folder per format when several are selected).
+
+Like the rest of Squoosh, all of this runs locally — no image is uploaded.
+
 # Privacy
 
 Squoosh does not send your image to a server. All image compression processes locally.

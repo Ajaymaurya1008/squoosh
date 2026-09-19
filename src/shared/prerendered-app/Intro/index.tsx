@@ -71,6 +71,10 @@ async function getImageClipboardItem(
 
 interface Props {
   onFile?: (file: File) => void;
+  /** Called when several files are picked at once. */
+  onFiles?: (files: File[]) => void;
+  /** Open batch mode with no files. */
+  onBatch?: () => void;
   showSnack?: SnackBarElement['showSnackbar'];
 }
 interface State {
@@ -119,10 +123,19 @@ export default class Intro extends Component<Props, State> {
 
   private onFileChange = (event: Event): void => {
     const fileInput = event.target as HTMLInputElement;
-    const file = fileInput.files && fileInput.files[0];
-    if (!file) return;
+    const files = Array.from(fileInput.files || []);
+    if (files.length === 0) return;
     this.fileInput!.value = '';
-    this.props.onFile!(file);
+
+    if (files.length > 1 && this.props.onFiles) {
+      this.props.onFiles(files);
+      return;
+    }
+    this.props.onFile!(files[0]);
+  };
+
+  private onBatchClick = () => {
+    this.props.onBatch!();
   };
 
   private onOpenClick = () => {
@@ -231,6 +244,7 @@ export default class Intro extends Component<Props, State> {
           class={style.hide}
           ref={linkRef(this, 'fileInput')}
           type="file"
+          multiple
           onChange={this.onFileChange}
         />
         <div class={style.main}>
@@ -294,6 +308,9 @@ export default class Intro extends Component<Props, State> {
                   'Paste'
                 )}
               </div>
+              <button class={style.batchBtn} onClick={this.onBatchClick}>
+                Compress many at once
+              </button>
             </div>
           </div>
         </div>

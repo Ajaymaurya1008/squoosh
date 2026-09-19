@@ -23,6 +23,7 @@
   min-height: 541px;
   display: grid;
   grid-template-rows: max-content max-content;
+  grid-auto-rows: max-content;
   justify-items: center;
   position: relative;
   --blob-pink: var(--hot-pink);
@@ -95,6 +96,22 @@
   text-decoration: underline;
   font: inherit;
   color: inherit;
+}
+
+.batch-btn {
+  composes: unbutton from global;
+  padding: 0.5rem 1.1rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.85rem;
+  color: inherit;
+  opacity: 0.85;
+
+  &:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.12);
+  }
 }
 
 .demos-container {
