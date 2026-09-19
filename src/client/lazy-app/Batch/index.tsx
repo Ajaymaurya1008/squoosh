@@ -344,7 +344,15 @@ export default class Batch extends Component<Props, State> {
         const signature = outputSignature(format, settings);
         const existing = item.outputs[format.type];
 
-        if (existing && existing.signature === signature) {
+        // Only reuse an output that actually finished. A pending one belongs
+        // to work this run just aborted, so it has to be encoded again -
+        // otherwise nothing is scheduled for it and the item is marked done
+        // while its result never arrives.
+        if (
+          existing &&
+          existing.signature === signature &&
+          existing.status !== 'pending'
+        ) {
           outputs[format.type] = existing;
           continue;
         }
@@ -562,7 +570,6 @@ export default class Batch extends Component<Props, State> {
 
   private renderItem(item: Item): h.JSX.Element {
     const { settings } = this.state;
-    const busy = item.status === 'queued' || item.status === 'working';
 
     // The size the outputs are actually encoded at, if resizing shrinks it.
     const resized =
@@ -609,7 +616,11 @@ export default class Batch extends Component<Props, State> {
                 >
                   <span class={style.outputLabel}>{label}</span>
                   <span class={style.outputValue}>
-                    {failed ? 'Skipped' : busy ? 'Working…' : 'Queued'}
+                    {failed
+                      ? 'Skipped'
+                      : item.status === 'queued'
+                      ? 'Queued'
+                      : 'Working…'}
                   </span>
                 </li>
               );
