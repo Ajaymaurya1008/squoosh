@@ -1,0 +1,40 @@
+{
+  "name": "squoosh-batch",
+  "version": "1.0.0",
+  "description": "Batch image compression from the command line, using Squoosh's WebAssembly codecs",
+  "keywords": [
+    "squoosh",
+    "image",
+    "compression",
+    "batch",
+    "webp",
+    "avif",
+    "mozjpeg",
+    "jpeg-xl",
+    "cli"
+  ],
+  "license": "apache-2.0",
+  "type": "module",
+  "bin": {
+    "squoosh-batch": "./index.js"
+  },
+  "engines": {
+    "node": ">=18.3.0"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "vendor",
+    "README.md"
+  ],
+  "scripts": {
+    "prepack": "node scripts/vendor-codecs.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ajaymaurya1008/squoosh.git",
+    "directory": "cli"
+  },
+  "homepage": "https://github.com/Ajaymaurya1008/squoosh/tree/dev/cli#readme",
+  "bugs": "https://github.com/Ajaymaurya1008/squoosh/issues"
+}

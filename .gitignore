@@ -10,3 +10,9 @@ build
 src/features-worker/index.ts
 src/client/lazy-app/worker-bridge/meta.ts
 src/client/lazy-app/feature-meta/index.ts
+
+# Default output directory for the batch CLI
+squooshed
+
+# Codec files copied in when the CLI is packed
+cli/vendor

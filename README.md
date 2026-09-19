@@ -24,6 +24,19 @@ compressing many images at once:
 
 Like the rest of Squoosh, all of this runs locally — no image is uploaded.
 
+# Command line
+
+The same batch compression is available without a browser:
+
+```sh
+npm install -g squoosh-batch
+squoosh-batch -f webP -q 60 -o out photos/
+```
+
+It runs the same WebAssembly codecs with the same defaults, so most formats
+come out byte-identical to the web app. See [cli/README.md](/cli/README.md) for
+the options and for exactly which formats match.
+
 # Privacy
 
 Squoosh does not send your image to a server. All image compression processes locally.
