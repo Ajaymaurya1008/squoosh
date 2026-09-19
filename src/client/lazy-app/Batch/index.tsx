@@ -777,8 +777,8 @@ export default class Batch extends Component<Props, State> {
 
             <h2 class={style.sectionTitle}>Resize</h2>
             <label class={style.resizeToggle}>
-              <input
-                type="checkbox"
+              <Checkbox
+                name="resize"
                 checked={settings.resize.enabled}
                 onChange={this.onResizeEnabledChange}
               />

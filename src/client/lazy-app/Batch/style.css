@@ -1,8 +1,13 @@
 .batch {
-  /* The embedded encoder option panels are themed with these. */
+  /* The embedded encoder option panels are themed with these. In the editor
+     they come from the options scroller, which batch mode doesn't render.
+     --horizontal-padding especially: the panels use it in `padding: 10px
+     var(--horizontal-padding)`, and an undefined var invalidates the whole
+     shorthand, so without it every row loses its padding entirely. */
   --main-theme-color: var(--pink);
   --hot-theme-color: var(--hot-pink);
   --header-text-color: var(--white);
+  --horizontal-padding: 14px;
 
   position: absolute;
   inset: 0;
