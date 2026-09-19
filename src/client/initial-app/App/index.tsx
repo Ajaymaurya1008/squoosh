@@ -32,6 +32,8 @@ interface State {
   batchFiles: File[];
   isEditorOpen: boolean;
   isBatchOpen: boolean;
+  /** The batch chunk failed to load, so batch mode can't be opened. */
+  batchUnavailable: boolean;
   Compress?: typeof import('client/lazy-app/Compress').default;
   Batch?: typeof import('client/lazy-app/Batch').default;
 }
@@ -43,6 +45,7 @@ export default class App extends Component<Props, State> {
     ),
     isEditorOpen: false,
     isBatchOpen: false,
+    batchUnavailable: false,
     file: undefined,
     batchFiles: [],
     Compress: undefined,
@@ -67,7 +70,9 @@ export default class App extends Component<Props, State> {
         this.setState({ Batch: module.default });
       })
       .catch(() => {
-        this.showSnack('Failed to load batch mode');
+        // Don't strand the user on a blank screen if they're already there.
+        this.setState({ batchUnavailable: true });
+        if (this.state.isBatchOpen) this.leaveBatch();
       });
 
     swBridgePromise.then(async ({ offliner, getSharedImage }) => {
@@ -154,7 +159,19 @@ export default class App extends Component<Props, State> {
     this.setState({ isEditorOpen: true, isBatchOpen: false });
   };
 
+  private leaveBatch(): void {
+    const url = new URL(location.href);
+    url.pathname = '/';
+    history.replaceState(null, '', url.href);
+    this.setState({ isBatchOpen: false });
+    this.showSnack("Couldn't load batch mode. Try reloading.");
+  }
+
   private openBatch = (files: File[] = []) => {
+    if (this.state.batchUnavailable) {
+      this.showSnack("Couldn't load batch mode. Try reloading.");
+      return;
+    }
     if (!this.state.isBatchOpen) this.navigate(ROUTE_BATCH);
     this.setState((state) => ({
       isBatchOpen: true,
@@ -219,7 +236,6 @@ export default class App extends Component<Props, State> {
                   <Intro
                     onFile={this.onIntroPickFile}
                     onFiles={this.onIntroPickFiles}
-                    onBatch={this.openBatch}
                     showSnack={this.showSnack}
                   />
                 ))}

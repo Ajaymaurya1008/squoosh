@@ -98,20 +98,12 @@
   color: inherit;
 }
 
-.batch-btn {
-  composes: unbutton from global;
-  padding: 0.5rem 1.1rem;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  font: inherit;
+.batch-note {
+  margin: 0;
   font-size: 0.85rem;
   color: inherit;
   opacity: 0.85;
-
-  &:hover {
-    opacity: 1;
-    background: rgba(255, 255, 255, 0.12);
-  }
+  text-align: center;
 }
 
 .demos-container {
